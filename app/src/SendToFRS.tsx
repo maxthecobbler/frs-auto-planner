@@ -74,8 +74,6 @@ export function SendToFRS({ onClose }: { onClose: () => void }) {
           <li>
             <b>Drag this button to your bookmarks bar</b> (show it with ⌘⇧B). You only need to do this once:
             <div className="bm-row">
-              <a ref={link} className="bookmarklet" onClick={(e) => e.preventDefault()} draggable>
-                ⚡ FRS Auto 21
               <a ref={loader} className="bookmarklet" onClick={(e) => e.preventDefault()} draggable>
                 ⚡ FRS Auto
               </a>

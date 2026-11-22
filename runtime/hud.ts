@@ -6,9 +6,8 @@ import { allianceOfX } from '../shared/field';
 import type { Runner } from './runner';
 import type { Recorder } from './recorder';
 import { store } from './storage';
-import { readDriverDisplay, readMode, readPhase } from './game';
 import { syncFromPlanner } from './sync';
-import { GAME, readMode, readPhase, robotInfo } from './game';
+import { GAME, readDriverDisplay, readMode, readPhase, robotInfo } from './game';
 
 // Fall theme to match FRS's Thanksgiving look: warm browns, cream text, gold accents.
 const CSS = `
@@ -504,7 +503,6 @@ export function mountHud(runner: Runner, recorder: Recorder) {
       }
     }
 
-    drawField(ctx, view);
     drawField(ctx, view, GAME, { bg: '#21170f', edge: '#5a4330' });
     let path = t.state === 'running' && t.schedule ? t.schedule.path : null;
     if (!path) {

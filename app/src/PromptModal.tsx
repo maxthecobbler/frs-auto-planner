@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { FIELD } from '../../shared/field';
-import { applyAutoHandles, blankRoutine, makeAction, makeWaypoint, parseRoutine, type ActionType, type Routine } from '../../shared/routine';
+import { applyAutoHandles, blankRoutine, gameOf, makeAction, makeWaypoint, parseRoutine, type ActionType, type Routine } from '../../shared/routine';
 import { useStore } from './store';
 import { isWaypointCommand, waypointMove } from './waypointCommand';
 import { useRoutine } from './useSchedule';
 
 function generate(prompt: string, current: Routine): Routine {
-  const routine = blankRoutine('Generated auto');
+  const game = gameOf(current);
+  const routine = blankRoutine('Generated auto', game.id);
   routine.robotId = current.robotId;
   routine.constraints = { ...current.constraints };
   routine.waypoints = [makeWaypoint(current.waypoints[0]?.x ?? routine.waypoints[0].x, current.waypoints[0]?.y ?? routine.waypoints[0].y, current.waypoints[0]?.heading ?? routine.waypoints[0].heading)];
@@ -22,14 +22,14 @@ function generate(prompt: string, current: Routine): Routine {
       const heading = prev.heading ?? 0;
       const angle = heading + ({ forward: 0, backward: Math.PI, back: Math.PI, left: Math.PI / 2, right: -Math.PI / 2 } as Record<string, number>)[move[1]];
       const x = prev.x + distance * Math.cos(angle), y = prev.y + distance * Math.sin(angle);
-      if (x < 0 || x > FIELD.length || y < 0 || y > FIELD.width) throw new Error(`“${command}” would drive off the field.`);
+      if (x < 0 || x > game.field.length || y < 0 || y > game.field.width) throw new Error(`“${command}” would drive off the field.`);
       routine.waypoints.push(makeWaypoint(x, y, heading));
     } else if (action) {
       const types: Record<string, ActionType> = { shoot: 'shoot', climb: 'climb', wait: 'wait', intake: 'intakeFor', 'intake on': 'intakeOn', 'intake off': 'intakeOff' };
       if (action[2] && Number(action[2]) <= 0) throw new Error('Action duration must be greater than zero.');
       if (action[2] && (action[1] === 'intake on' || action[1] === 'intake off')) throw new Error('Use “intake for 2 seconds” for a timed intake.');
       const index = routine.waypoints.length - 1;
-      const item = makeAction(types[action[1]], index ? { seg: index - 1, u: 1 } : { seg: 0, u: 0 });
+      const item = makeAction(types[action[1]], index ? { seg: index - 1, u: 1 } : { seg: 0, u: 0 }, game);
       if (action[2]) item.duration = Number(action[2]);
       routine.actions.push(item);
     } else throw new Error(`Could not understand “${command}”. Use the examples shown below.`);

@@ -1,14 +1,9 @@
 import { plannerRobot } from '../shared/robots';
-import { FIELD, allianceOfX, wrapAngle, type Pose } from '../shared/field';
-import { mirrorRoutine, type Routine } from '../shared/routine';
-import { buildSchedule, buttonsAt, referenceAt, type Schedule } from '../shared/schedule';
-import { stickFromVelocity } from '../shared/stick';
-import { AutoWatch, isAutoPhase, readDriverDisplay, readMode, readPose, robotInfo } from './game';
 import { allianceOfX, wrapAngle, type Pose } from '../shared/field';
 import { mirrorRoutine, type Routine } from '../shared/routine';
 import { buildSchedule, buttonsAt, referenceAt, type Schedule } from '../shared/schedule';
 import { stickFromVelocity } from '../shared/stick';
-import { AutoWatch, GAME, driveFrame, isAutoPhase, readMode, readPose, robotInfo } from './game';
+import { AutoWatch, GAME, driveFrame, isAutoPhase, readDriverDisplay, readMode, readPose, robotInfo } from './game';
 import { isActive, realInputActive, setActive, setButtons, setSticks } from './pad';
 import { store } from './storage';
 

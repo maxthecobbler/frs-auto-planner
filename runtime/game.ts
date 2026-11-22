@@ -316,6 +316,8 @@ export function readDriverDisplay(kind: 'singleplayer' | 'multiplayer') {
     driveRates,
     balls: Number.isSafeInteger(fuel) && fuel >= 0 ? fuel as number : null,
   };
+}
+
 /** Reefscape / Crescendo: FRS's own record of our robot, in scene coords + yaw (front = (sin yaw, cos yaw)). */
 function statePose(): { X: number; Z: number; yaw: number } | null {
   findStores();

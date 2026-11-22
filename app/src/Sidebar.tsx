@@ -1,5 +1,4 @@
 import { PLANNER_ROBOTS, plannerRobot } from '../../shared/robots';
-import { ACTIONS, ACTION_TYPES, BUTTONS, BUTTON_IDS, DEFAULT_LAT_ACCEL, DEFAULT_SHOOT_SPEED_PCT, type ActionType, type ButtonId } from '../../shared/routine';
 import { ACTIONS, DEFAULT_LAT_ACCEL, DEFAULT_SHOOT_SPEED_PCT, actionLabel, actionTitle, actionTypesFor, buttonIds, buttonLabel, type ActionType, type ButtonId } from '../../shared/routine';
 import { posToS } from '../../shared/path';
 import { useStore, type Tool } from './store';

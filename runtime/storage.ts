@@ -17,8 +17,6 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   cal: { ...DEFAULT_CALIBRATION },
-  front: '-x',
-  buttonMap: Object.fromEntries(BUTTON_IDS.map((b) => [b, BUTTONS[b].pad])) as Record<ButtonId, number>,
   panelSize: null,
   hopperLayout: { x: 0.5, y: 0, fontSize: 24 },
   autoCalibrate: true,

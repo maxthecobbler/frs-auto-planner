@@ -17,4 +17,12 @@ describe('numbered waypoint edits', () => {
     expect(() => waypointMove('move point 9 forward 10 m', routine)).toThrow(/outside/);
     expect(() => waypointMove('move point 10 forward', routine)).toThrow(/missing/);
   });
+
+  it('uses the field dimensions of the routine’s game', () => {
+    const reefscape = blankRoutine('Reefscape', 'reefscape');
+    reefscape.waypoints = [makeWaypoint(16, 2), makeWaypoint(16.5, 2)];
+    expect(waypointMove('move point 1 forward 0.5 m', reefscape).x).toBe(17);
+    expect(() => waypointMove('move point 1 forward 1.1 m', reefscape)).toThrow(/outside/);
+    expect(() => waypointMove('move point 1 forward 0.5 m', { ...reefscape, game: 'rebuilt' })).toThrow(/outside/);
+  });
 });

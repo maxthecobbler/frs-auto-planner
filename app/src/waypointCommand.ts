@@ -1,5 +1,4 @@
-import { FIELD } from '../../shared/field';
-import type { Routine } from '../../shared/routine';
+import { gameOf, type Routine } from '../../shared/routine';
 
 const pointLabel = /\b(?:waypoint|point)\s*#?\s*(\d+|s)\b/i;
 
@@ -32,6 +31,7 @@ export function waypointMove(prompt: string, routine: Routine) {
   const offset = direction.startsWith('back') ? Math.PI : direction === 'left' ? Math.PI / 2 : direction === 'right' ? -Math.PI / 2 : 0;
   const x = point.x + distance * Math.cos(angle + offset);
   const y = point.y + distance * Math.sin(angle + offset);
-  if (x < 0 || x > FIELD.length || y < 0 || y > FIELD.width) throw new Error('That move would put the point outside the field.');
+  const field = gameOf(routine).field;
+  if (x < 0 || x > field.length || y < 0 || y > field.width) throw new Error('That move would put the point outside the field.');
   return { id: point.id, x, y };
 }

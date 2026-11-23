@@ -109,14 +109,8 @@ export class Recorder {
       return;
     }
     try {
-      this.result = recordingToRoutine(this.samples);
-      this.saveResult();
       this.result = recordingToRoutine(this.samples, { game: GAME.id });
-      try {
-        localStorage.setItem(LAST_KEY, JSON.stringify(this.result));
-      } catch {
-        /* ignore */
-      }
+      this.saveResult();
       const r = this.result;
       this.set('idle', `Recorded ${dur.toFixed(1)} s · ${r.waypoints.length} waypoints · ${r.actions.length} actions.`);
     } catch (e) {

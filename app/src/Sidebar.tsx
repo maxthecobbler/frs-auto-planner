@@ -253,11 +253,13 @@ export function ConstraintsPanel() {
   const sched = useSchedule();
   const s = useStore.getState();
   const c = r.constraints;
-  const robot = plannerRobot(r.robotId);
+  // the robot list is FRS's Rebuilt roster
+  const rebuilt = useGame().id === 'rebuilt';
+  const robot = rebuilt ? plannerRobot(r.robotId) : undefined;
   return (
     <section className="panel">
-      <h3>Robot &amp; speed limits</h3>
-      <label>
+      <h3>{rebuilt ? 'Robot & speed limits' : 'Speed limits'}</h3>
+      {rebuilt && <label>
         Robot for this auto
         <select value={robot?.id ?? ''} onChange={(e) => {
           const next = plannerRobot(Number(e.target.value));
@@ -270,7 +272,7 @@ export function ConstraintsPanel() {
           <option value="">Custom limits</option>
           {PLANNER_ROBOTS.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
         </select>
-      </label>
+      </label>}
       {robot && <p className="hint">{robot.team} · {robot.region}</p>}
       <div className="grid2">
         <label>

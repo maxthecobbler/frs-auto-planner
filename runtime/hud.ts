@@ -11,40 +11,27 @@ import { GAME, readDriverDisplay, readMode, readPhase, robotInfo } from './game'
 
 // Fall theme to match FRS's Thanksgiving look: warm browns, cream text, gold accents.
 const CSS = `
-:host { all: initial; }
-.box { position: fixed; top: 64px; left: 12px; z-index: 2147483647; width: 300px; background: rgba(15,17,23,0.94);
-  display: flex; flex-direction: column; box-sizing: border-box; max-width: 100vw; max-height: 100vh;
-  color: #e5e7eb; font: 12px/1.4 system-ui, -apple-system, sans-serif; border: 1px solid #334155; border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5); user-select: none; }
-.hd { touch-action: none; flex: none; display: flex; align-items: center; gap: 6px; padding: 8px 10px; cursor: move; border-bottom: 1px solid #1f2937; }
-.hd b { font-size: 13px; letter-spacing: .3px; color: #facc15; }
-.hd .sp { flex: 1; }
-.ic { background: none; border: 0; color: #94a3b8; cursor: pointer; font-size: 14px; padding: 0 4px; }
-.ic:hover { color: #fff; }
-.bd { padding: 8px 10px 10px; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; flex: 1 1 auto; gap: 8px; overflow-y: auto; min-height: 0; overscroll-behavior: contain;
-  scrollbar-width: thin; scrollbar-color: #475569 transparent; }
-.st { padding: 6px 8px; border-radius: 6px; background: #111827; border: 1px solid #1f2937; min-height: 18px; }
-.st.running { border-color: #22c55e; } .st.recording { border-color: #ef4444; } .st.rec-armed { border-color: #f87171; } .st.armed { border-color: #facc15; } .st.calibrating { border-color: #06b6d4; }
 :host { all: initial;
   --bg: rgba(27,19,14,0.96); --card: #231912; --card-2: #2b1f16; --line: #3b2c20; --line-2: #4a3727;
   --text: #f5ede3; --muted: #b8a796; --gold: #f2b950; --gold-2: #f7c96b; --gold-ink: #2a1a0a;
   --ember: #e0692b; --leaf: #c2581f; --danger: #8f2a1c; --danger-line: #b23a24; }
 .box { position: fixed; top: 64px; left: 12px; z-index: 2147483647; width: 300px; background: var(--bg);
-  display: flex; flex-direction: column; max-height: calc(100vh - 76px);
+  display: flex; flex-direction: column; box-sizing: border-box; max-width: 100vw; max-height: calc(100vh - 76px);
   color: var(--text); font: 12px/1.4 system-ui, -apple-system, sans-serif; border: 1px solid var(--line-2); border-radius: 12px;
   box-shadow: 0 10px 34px rgba(0,0,0,0.55), inset 0 1px 0 rgba(242,185,80,0.06); user-select: none; overflow: hidden; }
-.hd { position: relative; flex: none; display: flex; align-items: center; gap: 6px; padding: 9px 10px 9px 30px; cursor: move;
+.hd { position: relative; touch-action: none; flex: none; display: flex; align-items: center; gap: 6px; padding: 9px 10px 9px 30px; cursor: move;
   border-bottom: 1px solid var(--line); background: linear-gradient(180deg, rgba(242,185,80,0.07), transparent); }
 .hd .leaf { position: absolute; left: 8px; top: 50%; width: 16px; height: 16px; margin-top: -8px; color: var(--leaf); transform: rotate(-18deg); }
 .hd b { font-size: 13px; letter-spacing: .4px; color: var(--gold); }
 .hd .sp { flex: 1; }
 .ic { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0 4px; }
 .ic:hover { color: var(--gold-2); }
-.bd { padding: 9px 10px 11px; display: grid; gap: 8px; overflow-y: auto; min-height: 0; overscroll-behavior: contain;
+.bd { padding: 9px 10px 11px; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; flex: 1 1 auto; gap: 8px; overflow-y: auto; min-height: 0; overscroll-behavior: contain;
   scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
 .st { padding: 7px 9px; border-radius: 8px; background: var(--card); border: 1px solid var(--line); min-height: 18px; }
 .st.running { border-color: #6fbf73; } .st.recording { border-color: var(--ember); } .st.rec-armed { border-color: #e8955e; }
 .st.armed { border-color: var(--gold); box-shadow: 0 0 0 1px rgba(242,185,80,0.25); } .st.calibrating { border-color: #d9a441; }
+[hidden] { display: none !important; }
 .row { display: flex; gap: 6px; align-items: center; }
 select, input, textarea { background: #1a120d; color: var(--text); border: 1px solid var(--line-2); border-radius: 7px; padding: 4px 6px; font: inherit; }
 select:focus, input:focus, textarea:focus { outline: none; border-color: var(--gold); }
@@ -68,19 +55,17 @@ details summary:hover { color: var(--gold-2); }
 details[open] summary { color: var(--gold); }
 details .grid { display: grid; grid-template-columns: 1fr 70px; gap: 4px 8px; margin-top: 6px; align-items: center; }
 details input { width: 100%; box-sizing: border-box; }
-.muted { color: #94a3b8; font-size: 11px; }
 [data-resize] { align-self: flex-end; flex: none; width: 20px; height: 14px; border: 0; padding: 0;
-  background: transparent; color: #94a3b8; cursor: nwse-resize; touch-action: none; line-height: 12px; }
+  background: transparent; color: var(--muted); cursor: nwse-resize; touch-action: none; line-height: 12px; }
 .min .bd, .min [data-resize] { display: none; }
 .box.min { height: auto !important; }
 .hopper-area { position: fixed; inset: 8px; z-index: 2147483647; pointer-events: none; }
 [data-hopper] { position: absolute; width: max-content; max-width: 100%; box-sizing: border-box;
-  padding: .2em .55em; border-radius: .35em; background: rgba(15,17,23,.94); color: #facc15;
+  padding: .2em .55em; border-radius: .35em; background: var(--bg); color: var(--gold); border: 1px solid var(--line-2);
   font: 700 24px/1.25 system-ui, sans-serif; font-variant-numeric: tabular-nums;
   touch-action: none; user-select: none; pointer-events: auto; cursor: grab; }
 [data-hopper]:active { cursor: grabbing; }
 .muted { color: var(--muted); font-size: 11px; }
-.min .bd { display: none; }
 `;
 
 // maple leaf, like the one by FRS's logo
@@ -99,15 +84,14 @@ export function mountHud(runner: Runner, recorder: Recorder) {
       <div class="st" data-status></div>
       <div class="muted" data-mode></div>
       <div data-driver hidden><strong data-robot></strong><div class="muted" data-team></div></div>
-      <div class="row"><select data-routines></select><button class="ic" data-rename>Rename</button><button class="ic" data-del title="Delete routine">🗑</button></div>
-      <div class="row"><select data-routines></select><button class="b sync" data-sync title="Get your latest autos from the planner website">↻ Sync</button><button class="ic" data-del title="Delete routine">🗑</button></div>
+      <div class="row"><select data-routines></select><button class="b sync" data-sync title="Get your latest autos from the planner website">↻ Sync</button><button class="ic" data-rename title="Rename routine">✎</button><button class="ic" data-del title="Delete routine">🗑</button></div>
       <canvas data-map width="560" height="280"></canvas>
       <div class="row">
         <button class="b go" data-arm title="Start automatically when Auto begins">Arm for Auto</button>
         <button class="b" data-run title="Run right now (practice, any phase)">Run now</button>
         <button class="b stop" data-stop>Stop</button>
       </div>
-      <details><summary>Hopper display</summary>
+      <details data-rebuilt-only><summary>Hopper display</summary>
         <div class="grid"><label for="hopper-size">Text size</label><input id="hopper-size" type="range" min="12" max="72"></div>
         <div class="row"><button class="b" data-hopper-center>Move to top center</button></div>
         <div class="muted">Drag the hopper count to place it anywhere.</div>
@@ -134,8 +118,8 @@ export function mountHud(runner: Runner, recorder: Recorder) {
         <div class="row" style="margin-top:6px"><button class="b" data-paste>Load</button></div>
       </details>
       <details><summary>Setup &amp; calibration</summary>
-        <label class="row"><input style="width:auto" type="checkbox" data-auto-cal>Use current robot’s drive calibration</label>
-        <div class="muted" data-cal-source></div>
+        <label class="row" data-rebuilt-only><input style="width:auto" type="checkbox" data-auto-cal>Use current robot’s drive calibration</label>
+        <div class="muted" data-cal-source data-rebuilt-only></div>
         <div class="row" style="margin-top:6px"><button class="b go" data-calibrate>Calibrate (needs ~4 m clear ahead)</button></div>
         <div class="muted" style="margin-top:4px">Drive into open space first, like the middle of the neutral zone.</div>
         <div class="grid">
@@ -157,6 +141,9 @@ export function mountHud(runner: Runner, recorder: Recorder) {
   document.body.appendChild(host);
 
   const $ = <T extends Element>(sel: string) => root.querySelector(sel) as T;
+  // FRS only publishes its robot roster (drive rates, hopper) in Rebuilt
+  const hasRoster = GAME.id === 'rebuilt';
+  if (!hasRoster) root.querySelectorAll<HTMLElement>('[data-rebuilt-only]').forEach((el) => (el.hidden = true));
   const box = $<HTMLDivElement>('.box');
   const status = $<HTMLDivElement>('[data-status]');
   const phaseEl = $<HTMLSpanElement>('[data-phase]');
@@ -413,6 +400,7 @@ export function mountHud(runner: Runner, recorder: Recorder) {
   const calSource = $('[data-cal-source]');
   const measureButton = $<HTMLButtonElement>('[data-calibrate]');
   autoCal.checked = s0.autoCalibrate;
+  const autoOn = () => hasRoster && autoCal.checked;
   autoCal.addEventListener('change', () => {
     if (runner.t.state === 'calibrating') runner.stop();
     store.setSettings({ autoCalibrate: autoCal.checked });
@@ -477,7 +465,7 @@ export function mountHud(runner: Runner, recorder: Recorder) {
         : `${label}: ${mode.reason}`;
       if (mode.kind === 'singleplayer' || mode.kind === 'multiplayer') {
         const { profile, team, balls, driveRates } = readDriverDisplay(mode.kind);
-        if (autoCal.checked) rates = driveRates;
+        if (autoOn()) rates = driveRates;
         robotEl.textContent = profile?.robotName ?? (team == null ? 'Looking for your robot…' : 'Your robot');
         teamEl.textContent = [team != null && `Team ${team}`, profile?.name, profile?.region].filter(Boolean).join(' · ');
         hopperEl.textContent = balls === null ? 'Hopper count unavailable' : `Hopper: ${balls} ${balls === 1 ? 'ball' : 'balls'}`;
@@ -486,17 +474,17 @@ export function mountHud(runner: Runner, recorder: Recorder) {
       modeEl.style.color = mode.allowed ? '' : '#fca5a5';
     } else modeEl.textContent = '';
 
-    const plannedRobot = autoCal.checked ? plannerRobot(store.selected()?.robotId) : undefined;
+    const plannedRobot = autoOn() ? plannerRobot(store.selected()?.robotId) : undefined;
     const liveRates = rates;
     rates ??= plannedRobot ?? null;
-    hopperEl.hidden = driverEl.hidden;
-    measureButton.disabled = autoCal.checked;
-    calSource.textContent = autoCal.checked
+    hopperEl.hidden = driverEl.hidden || !hasRoster;
+    measureButton.disabled = autoOn();
+    calSource.textContent = autoOn()
       ? (liveRates ? 'Using the current robot’s speed and turn rate.' : plannedRobot ? `Using planner robot ${plannedRobot.label} until live calibration is available.` : 'Using saved settings until the robot profile is available.')
       : 'Using manual calibration.';
     for (const input of calInputs) {
       const key = input.dataset.cal as keyof typeof s0.cal;
-      input.disabled = autoCal.checked && key !== 'deadzone';
+      input.disabled = autoOn() && key !== 'deadzone';
       if (root.activeElement !== input) {
         const value = rates && key !== 'deadzone' ? rates[key] : store.settings().cal[key];
         input.value = String(+value.toFixed(4));

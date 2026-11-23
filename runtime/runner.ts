@@ -212,7 +212,7 @@ export class Runner {
     const eh = wrapAngle(ref.pose.heading - pose.heading);
     let vx = ref.vx + settings.kP * ex;
     let vy = ref.vy + settings.kP * ey;
-    const rates = settings.autoCalibrate && (mode.kind === 'singleplayer' || mode.kind === 'multiplayer')
+    const rates = GAME.id === 'rebuilt' && settings.autoCalibrate && (mode.kind === 'singleplayer' || mode.kind === 'multiplayer')
       ? readDriverDisplay(mode.kind).driveRates ?? this.plannedRobot : null;
     const cal = rates ? { ...settings.cal, ...rates } : settings.cal;
     const vmax = cal.maxVel;
@@ -226,14 +226,12 @@ export class Runner {
     let omega = ref.omega + settings.kTheta * eh;
     if (Math.abs(eh) < 0.015 && Math.abs(ref.omega) < 1e-3) omega = 0;
 
-    const s = stickFromVelocity(vx, vy, omega, this.t.alliance, cal);
-    setSticks(s.lx, s.ly, s.rx);
     // FRS's own auto-align is driving (e.g. Reefscape reef poles): let go of the sticks,
     // since any stick input over 15% would cancel it
     const assisting = sched.assists.some((w) => el >= w.t0 && el < w.t1);
     if (assisting) setSticks(0, 0, 0);
     else {
-      const s = stickFromVelocity(vx, vy, omega, this.t.alliance, settings.cal, driveFrame());
+      const s = stickFromVelocity(vx, vy, omega, this.t.alliance, cal, driveFrame());
       setSticks(s.lx, s.ly, s.rx);
     }
     const pressed = new Set<number>();
